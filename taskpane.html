@@ -49,6 +49,8 @@
 					// Sync/Exectute the queued actions
 					context.sync().then(function () {
 						// Iterate through the headers collection
+						const paragraphTemp = context.document.body.insertParagraph(headers.length, Word.InsertLocation.start);
+						
 						for (var i = 0; i < headers.length; i++) {
 							// Output each header's text to the console
 							console.log(headers[i].text);
@@ -57,7 +59,7 @@
 						}
 						
 						// sync the context to run the previous API call, and return.
-							context.sync();
+					        context.sync();
 					});
 
 				}
