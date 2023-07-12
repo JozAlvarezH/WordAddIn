@@ -26,11 +26,42 @@
     function sayHello() {
         return Word.run((context) => {
 
-            // insert a paragraph at the start of the document.
-            const paragraph = context.document.body.insertParagraph("Hello World", Word.InsertLocation.start);
-            
-            // sync the context to run the previous API call, and return.
-            return context.sync();
+            var sections = context.document.sections;
+			context.load(sections);
+			return context.sync().then(function () {
+				if (sections != null) {
+					// Collection of headers we'll populate later
+					var headers = [];
+
+					// Iterate through the sections 
+					for (var i = 0; i < sections.items.length; i++) {
+
+						// Grab the header from the current section
+						var header = sections.items[i].getHeader('primary');
+
+						// Add loading this header to the  queue 
+						context.load(header);
+
+						// Push this header into the headers collection
+						headers.push(header);
+					}
+
+					// Sync/Exectute the queued actions
+					context.sync().then(function () {
+						// Iterate through the headers collection
+						for (var i = 0; i < headers.length; i++) {
+							// Output each header's text to the console
+							console.log(headers[i].text);
+							// insert a paragraph at the start of the document.
+							const paragraph = context.document.body.insertParagraph(headers[i].text, Word.InsertLocation.start);
+						}
+						
+						// sync the context to run the previous API call, and return.
+							context.sync();
+					});
+
+				}
+			});
         });
     }
 </script>
